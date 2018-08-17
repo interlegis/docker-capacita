@@ -3,7 +3,7 @@ FROM alpine:3.5
 
 ENV BUILD_PACKAGES graphviz-dev graphviz build-base git pkgconfig \
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
-py3-magic poppler-utils antiword vim 
+py3-magic poppler-utils antiword python-psycopg2 vim 
 
 ENV CAPACITA_VERSION=1.0.0-12 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
