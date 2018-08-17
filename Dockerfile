@@ -57,6 +57,4 @@ WORKDIR /var/interlegis/capacita/
 
 # CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
 
-RUN [“chmod”, “+x”, "/var/interlegis/capacita/start.sh”]
-
 CMD ["/var/interlegis/capacita/start.sh"]
