@@ -1,10 +1,11 @@
+#!/bin/sh
 FROM alpine:3.5
 
 ENV BUILD_PACKAGES graphviz-dev graphviz build-base git pkgconfig \
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
 py3-magic poppler-utils antiword vim 
 
-ENV CAPACITA_VERSION=1.0.0-8 \
+ENV CAPACITA_VERSION=1.0.0-9 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN rm -rf /var/cache/apk/* && \
@@ -55,5 +56,7 @@ RUN mkdir /var/log/capacita/ && \
 WORKDIR /var/interlegis/capacita/
 
 # CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
+
+RUN [“chmod”, “+x”, "/var/interlegis/capacita/start.sh”]
 
 CMD ["/var/interlegis/capacita/start.sh"]
