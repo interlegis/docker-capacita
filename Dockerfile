@@ -3,7 +3,7 @@ FROM alpine:3.5
 
 ENV BUILD_PACKAGES graphviz-dev graphviz build-base git pkgconfig \
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
-py3-magic poppler-utils antiword python-psycopg2 vim 
+py3-magic poppler-utils antiword vim 
 
 ENV CAPACITA_VERSION=1.0.0-12 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
@@ -19,8 +19,6 @@ RUN apk add --no-cache python3 tzdata && \
     pip3 install --upgrade pip setuptools && \
     rm -r /root/.cache && \
     rm -f /etc/nginx/conf.d/*
-
-RUN apt-get install python-psycopg2
 
 RUN mkdir -p /var/interlegis && \
     apk add --update --no-cache $BUILD_PACKAGES
