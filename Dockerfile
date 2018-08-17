@@ -5,7 +5,7 @@ ENV BUILD_PACKAGES graphviz-dev graphviz build-base git pkgconfig \
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
 py3-magic poppler-utils antiword vim 
 
-ENV CAPACITA_VERSION=1.0.0-11 \
+ENV CAPACITA_VERSION=1.0.0-12 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN rm -rf /var/cache/apk/* && \
@@ -34,8 +34,6 @@ WORKDIR /var/interlegis/capacita/
 
 RUN pip3 install -r /var/interlegis/capacita/requirements.txt --upgrade setuptools && \
     rm -r /root/.cache
-
-RUN pip3 install psycopg2
 
 # Configura timezone para BRT
 # RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" > /etc/timezone
