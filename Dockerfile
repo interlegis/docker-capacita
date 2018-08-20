@@ -5,7 +5,7 @@ ENV BUILD_PACKAGES postgresql-dev build-base git pkgconfig \
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
 postgresql-client poppler-utils antiword vim
 
-ENV CAPACITA_VERSION=1.0.0-14 \
+ENV CAPACITA_VERSION=1.0.0-16 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN rm -rf /var/cache/apk/* && \
