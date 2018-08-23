@@ -2,7 +2,7 @@
 FROM alpine:3.5
 
 ENV BUILD_PACKAGES postgresql-dev build-base git pkgconfig \
-python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
+python-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
 postgresql-client poppler-utils antiword vim
 
 ENV CAPACITA_VERSION=1.0.0-19 \
