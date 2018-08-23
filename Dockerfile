@@ -1,4 +1,3 @@
-#!/bin/sh
 FROM alpine:3.5
 
 ENV BUILD_PACKAGES postgresql-dev build-base git pkgconfig \
