@@ -1,7 +1,8 @@
-FROM alpine:3.5
+#!/bin/sh
+FROM alpine:3.7
 
 ENV BUILD_PACKAGES postgresql-dev build-base git pkgconfig \
-python-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
+python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
 postgresql-client poppler-utils antiword vim
 
 ENV CAPACITA_VERSION=1.0.0-19 \
@@ -19,7 +20,7 @@ RUN apk add --no-cache python3 tzdata && \
     rm -r /root/.cache && \
     rm -f /etc/nginx/conf.d/*
 
-RUN apk update
+RUN apk update --update-cache
 
 RUN mkdir -p /var/interlegis && \
     apk add --update --no-cache $BUILD_PACKAGES
