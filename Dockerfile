@@ -1,30 +1,28 @@
 #!/bin/sh
 FROM alpine:3.7
 
-ENV BUILD_PACKAGES postgresql-dev build-base git pkgconfig \
-python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev py3-lxml \
-postgresql-client poppler-utils antiword vim
+ENV BUILD_PACKAGES postgresql-dev graphviz-dev graphviz build-base git pkgconfig \
+python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev nodejs py3-lxml \
+py3-magic postgresql-client poppler-utils antiword vim
 
 ENV CAPACITA_VERSION=1.0.0-19 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
-RUN rm -rf /var/cache/apk/* && \
-    rm -rf /tmp/*
+RUN apk update --update-cache && apk upgrade
 
-RUN apk --update add fontconfig && fc-cache -fv
+RUN apk --update add fontconfig ttf-dejavu && fc-cache -fv
 
-RUN apk add --no-cache python3 tzdata && \
+RUN apk add --no-cache python3 nginx tzdata && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
     pip3 install --upgrade pip setuptools && \
     rm -r /root/.cache && \
     rm -f /etc/nginx/conf.d/*
 
-RUN apk update --update-cache
-
-RUN mkdir -p /var/interlegis && \
-    apk add --update --no-cache $BUILD_PACKAGES
-
+RUN mkdir -p /var/interlegis/capacita && \
+    apk add --update --no-cache $BUILD_PACKAGES && \
+    npm install -g bower && \
+    npm cache verify
 
 RUN cd /tmp \
  && git clone ${CAPACITA_URL} --depth=1 --branch ${CAPACITA_VERSION} \
@@ -32,29 +30,27 @@ RUN cd /tmp \
 
 WORKDIR /var/interlegis/capacita/
 
-RUN pip3 install -r /var/interlegis/capacita/requirements.txt --upgrade setuptools && \
+COPY start.sh /var/interlegis/capacita/
+COPY config/nginx/capacita.conf /etc/nginx/conf.d
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+
+RUN pip install -r /var/interlegis/capacita/requirements.txt --upgrade setuptools && \
     rm -r /root/.cache
+COPY config/env_dockerfile /var/interlegis/capacita/capacita/.env
 
-# Configura timezone para BRT
-# RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" > /etc/timezone
+#RUN python3 manage.py compilescss
 
-# manage.py bower install bug: https://github.com/nvbn/django-bower/issues/51
-
-# compilescss - Precompile all occurrences of your SASS/SCSS files for the whole project into css files
-
+#RUN python3 manage.py collectstatic --noinput --clear
 
 # Remove .env(fake) e capacita.db da imagem
 RUN rm -rf /var/interlegis/capacita/capacita/.env && \
     rm -rf /var/interlegis/capacita/capacita.db
 
-# EXPOSE port 8000 to allow communication to/from server
-EXPOSE 8000
+RUN chmod +x /var/interlegis/capacita/start.sh && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    mkdir /var/log/capacita/
 
-RUN mkdir /var/log/capacita/ && \
-    cd /var/interlegis/capacita
+VOLUME ["/var/interlegis/capacita/data", "/var/interlegis/capacita/media"]
 
-WORKDIR /var/interlegis/capacita/
-
-# CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
-
-# CMD ["/var/interlegis/capacita/start.sh"]
+CMD ["/var/interlegis/capacita/start.sh"]
