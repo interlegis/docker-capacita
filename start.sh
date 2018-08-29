@@ -13,7 +13,7 @@ create_env() {
     FILENAME="/var/interlegis/capacita/.env"
 
     if [ -z "${DATABASE_URL:-}" ]; then
-        DATABASE_URL="postgresql://capacita:${ADMINPW}@capacitadb:5432/capacita"
+        DATABASE_URL="postgresql://capacita:${ADMIN_PASSWORD}@capacitadb:5432/capacita"
     fi
 
     # ALWAYS replace the content of .env variable
