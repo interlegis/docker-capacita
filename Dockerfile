@@ -5,7 +5,7 @@ ENV BUILD_PACKAGES postgresql-dev graphviz-dev graphviz build-base git pkgconfig
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev nodejs py3-lxml \
 py3-magic postgresql-client poppler-utils antiword vim
 
-ENV CAPACITA_VERSION=1.0.0-19 \
+ENV CAPACITA_VERSION=1.0.0-21 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN apk update --update-cache && apk upgrade
@@ -40,17 +40,19 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install -r /var/interlegis/capacita/requirements.txt --upgrade setuptools && \
     rm -r /root/.cache
-COPY config/env_dockerfile /var/interlegis/capacita/capacita/.env
+COPY config/env_dockerfile /var/interlegis/capacita/.env
 
 #RUN python3 manage.py compilescss
 
 #RUN python3 manage.py collectstatic --noinput --clear
 
 # Remove .env(fake) e capacita.db da imagem
-RUN rm -rf /var/interlegis/capacita/capacita/.env && \
+RUN rm -rf /var/interlegis/capacita/.env && \
     rm -rf /var/interlegis/capacita/capacita.db
 
 RUN chmod +x /var/interlegis/capacita/start.sh && \
+    chmod +x /var/interlegis/capacita/busy-wait.sh && \
+    chmod +x /var/interlegis/capacita/gunicorn_start.sh && \
     ln -sf /proc/self/fd/1 /var/log/nginx/access.log && \
     ln -sf /proc/self/fd/1 /var/log/nginx/error.log && \
     mkdir /var/log/capacita/
