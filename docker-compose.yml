@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  
+  capacitadb:
+    image: postgres:9.6.8-alpine
+    environment:
+      POSTGRES_PASSWORD: ${ADMINPW}
+      POSTGRES_USER: capacita
+      POSTGRES_DB: capacita
+      PGDATA : /var/lib/postgresql/data/
+    volumes:
+      - capacitadb_data:/var/lib/postgresql/data/
+  
+  capacita:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://capacita:${ADMINPW}@capacitadb:5432/capacita
+      ADMIN_PASSWORD: ${ADMINPW}
+      ADMIN_EMAIL: changeme
+      EMAIL_PORT: 25
+      EMAIL_HOST: smtp.interlegis.leg.br
+    volumes:
+      - capacita_data:/var/interlegis/capacita/data
+      - capacita_media:/var/interlegis/capacita/media
+    links:
+      - capacitadb
+
+volumes:
+  capacitadb_data:
+  capacita_data:
+  capacita_media:

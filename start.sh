@@ -10,10 +10,10 @@ create_env() {
         echo $KEY > data/secret.key
     fi
 
-    FILENAME="/var/interlegis/capacita/capacita/.env"
+    FILENAME="/var/interlegis/capacita/.env"
 
     if [ -z "${DATABASE_URL:-}" ]; then
-        DATABASE_URL="postgresql://capacita:capacita@capacitadb:5432/capacita"
+        DATABASE_URL="postgresql://capacita:${ADMINPW}@capacitadb:5432/capacita"
     fi
 
     # ALWAYS replace the content of .env variable
