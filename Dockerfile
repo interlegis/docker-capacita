@@ -31,6 +31,10 @@ RUN cd /tmp \
 WORKDIR /var/interlegis/capacita/
 
 COPY start.sh /var/interlegis/capacita/
+COPY busy-wait.sh /var/interlegis/capacita/
+COPY create_admin.py /var/interlegis/capacita/
+COPY genkey.py /var/interlegis/capacita/
+COPY gunicorn_start.sh /var/interlegis/capacita/
 COPY config/nginx/capacita.conf /etc/nginx/conf.d
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
@@ -47,8 +51,8 @@ RUN rm -rf /var/interlegis/capacita/capacita/.env && \
     rm -rf /var/interlegis/capacita/capacita.db
 
 RUN chmod +x /var/interlegis/capacita/start.sh && \
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    ln -sf /proc/self/fd/1 /var/log/nginx/access.log && \
+    ln -sf /proc/self/fd/1 /var/log/nginx/error.log && \
     mkdir /var/log/capacita/
 
 VOLUME ["/var/interlegis/capacita/data", "/var/interlegis/capacita/media"]
