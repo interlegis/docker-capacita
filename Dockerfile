@@ -30,6 +30,7 @@ RUN cd /tmp \
 
 WORKDIR /var/interlegis/capacita/
 
+COPY capacita.db  /docker-entrypoint-initdb.d/
 COPY start.sh /var/interlegis/capacita/
 COPY busy-wait.sh /var/interlegis/capacita/
 COPY create_admin.py /var/interlegis/capacita/
@@ -45,8 +46,6 @@ COPY config/env_dockerfile /var/interlegis/capacita/.env
 #RUN python3 manage.py compilescss
 
 #RUN python3 manage.py collectstatic --noinput --clear
-
-COPY sql-scripts/ /docker-entrypoint-initdb.d/
 
 # Remove .env(fake) e capacita.db da imagem
 RUN rm -rf /var/interlegis/capacita/.env && \
