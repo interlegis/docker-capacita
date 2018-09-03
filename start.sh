@@ -51,6 +51,9 @@ yes yes | python3 manage.py migrate
 #python3 manage.py collectstatic --no-input
 # python3 manage.py rebuild_index --noinput &
 
+echo "Inicializando tabelas do BD"
+PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h capacitadb $POSTGRES_DB < /var/interlegis/capacita/capacita.sql
+
 echo "Criando usuário admin..."
 
 user_created=$(python3 create_admin.py 2>&1)
