@@ -30,7 +30,7 @@ RUN cd /tmp \
 
 WORKDIR /var/interlegis/capacita/
 
-COPY capacita.sql  /docker-entrypoint-initdb.d/
+COPY capacita.sql  /var/interlegis/capacita/
 COPY start.sh /var/interlegis/capacita/
 COPY busy-wait.sh /var/interlegis/capacita/
 COPY create_admin.py /var/interlegis/capacita/
