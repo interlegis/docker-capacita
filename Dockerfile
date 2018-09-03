@@ -5,7 +5,7 @@ ENV BUILD_PACKAGES postgresql-dev graphviz-dev graphviz build-base git pkgconfig
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev nodejs py3-lxml \
 py3-magic postgresql-client poppler-utils antiword vim
 
-ENV CAPACITA_VERSION=1.0.0-22 \
+ENV CAPACITA_VERSION=1.0.0-25 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN apk update --update-cache && apk upgrade
@@ -45,6 +45,8 @@ COPY config/env_dockerfile /var/interlegis/capacita/.env
 #RUN python3 manage.py compilescss
 
 #RUN python3 manage.py collectstatic --noinput --clear
+
+COPY sql-scripts/ /docker-entrypoint-initdb.d/
 
 # Remove .env(fake) e capacita.db da imagem
 RUN rm -rf /var/interlegis/capacita/.env && \
