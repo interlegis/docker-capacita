@@ -58,7 +58,7 @@ user_created=$(python3 create_admin.py 2>&1)
 echo $user_created
 
 echo "2. Inicializando tabelas do BD"
-PGPASSWORD=capacita psql -U capacita -h capacitadb capacita < /var/interlegis/capacita/capacita.sql
+PGPASSWORD=$POSTGRES_PASSWORD psql -U capacita -h capacitadb capacita < /var/interlegis/capacita/capacita.sql
 
 cmd=$(echo $user_created | grep 'ADMIN_USER_EXISTS')
 user_exists=$?
