@@ -1,9 +1,127 @@
 DO
 $do$
 BEGIN
-IF EXISTS (SELECT * FROM "Area_Conhecimento" ) THEN
+IF EXISTS (SELECT 1
+   FROM   information_schema.tables 
+   WHERE  table_schema = 'public'
+   AND    table_name = 'Area_Conhecimento') THEN
    RETURN;
 ELSE
+CREATE TABLE "Area_Conhecimento" (
+    cod_area_conhecimento SERIAL PRIMARY KEY,
+    txt_descricao         VARCHAR (200) NOT NULL,
+    ind_excluido          DECIMAL       NOT NULL
+);
+
+CREATE TABLE "Iniciativa" (
+    cod_iniciativa SERIAL PRIMARY KEY,
+    nome           VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Mes" (
+    cod_mes SERIAL PRIMARY KEY,
+    nome    VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Nivel" (
+    cod_nivel SERIAL PRIMARY KEY,
+    nome      VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Orgao" (
+    cod_orgao SERIAL PRIMARY KEY,
+    nome      VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Tipo_Plano_Capacitacao" (
+    cod_tipo_plano_capacitacao  SERIAL PRIMARY KEY,
+    sgl_tipo_plano_capacitacao  VARCHAR (6)   NOT NULL,
+    ind_excluido                DECIMAL       NOT NULL,
+    nome_tipo_plano_capacitacao VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Plano_Capacitacao" (
+    cod_plano_capacitacao         SERIAL PRIMARY KEY,
+    ano_plano_capacitacao         DECIMAL       NOT NULL,
+    ind_excluido                  DECIMAL       NOT NULL,
+    cod_orgao_id                  INTEGER       NOT NULL
+                                                REFERENCES "Orgao" (cod_orgao) DEFERRABLE INITIALLY DEFERRED,
+    cod_tipo_plano_capacitacao_id INTEGER       NOT NULL
+                                                REFERENCES "Tipo_Plano_Capacitacao" (cod_tipo_plano_capacitacao) DEFERRABLE INITIALLY DEFERRED,
+    qtd_servidores_comissionados  INTEGER       NOT NULL,
+    qtd_servidores_efetivos       INTEGER       NOT NULL,
+    situacao                      VARCHAR (200) NOT NULL
+);
+
+CREATE TABLE "Turno" (
+    cod_turno SERIAL PRIMARY KEY,
+    nome      VARCHAR (200) NOT NULL
+);
+
+-- Table: Prioridade
+CREATE TABLE "Prioridade" (
+    cod_prioridade SERIAL PRIMARY KEY,
+    nome           VARCHAR (200) NOT NULL
+);
+
+-- Table: Sub_Area_Conhecimento
+CREATE TABLE "Sub_Area_Conhecimento" (
+    cod_sub_area_conhecimento SERIAL PRIMARY KEY,
+    txt_descricao             VARCHAR (200) NOT NULL,
+    ind_excluido              DECIMAL       NOT NULL,
+    cod_area_conhecimento_id  INTEGER       NOT NULL
+                                            REFERENCES "Area_Conhecimento" (cod_area_conhecimento) DEFERRABLE INITIALLY DEFERRED
+);
+
+-- Table: Necessidade
+CREATE TABLE "Necessidade" (
+    cod_necessidade              SERIAL PRIMARY KEY,
+    txt_descricao                VARCHAR (200) NOT NULL,
+    qtd_servidor                 DECIMAL       NOT NULL,
+    hor_duracao                  DECIMAL       NOT NULL,
+    ind_excluido                 DECIMAL       NOT NULL,
+    cod_iniciativa_id            INTEGER       NOT NULL
+                                               REFERENCES "Iniciativa" (cod_iniciativa),
+    cod_mes_id                   INTEGER       NOT NULL
+                                               REFERENCES "Mes" (cod_mes),
+    cod_nivel_id                 INTEGER       NOT NULL
+                                               REFERENCES "Nivel" (cod_nivel),
+    cod_plano_capacitacao_id     INTEGER       NOT NULL
+                                               REFERENCES "Plano_Capacitacao" (cod_plano_capacitacao),
+    cod_prioridade_id            INTEGER       NOT NULL
+                                               REFERENCES "Prioridade" (cod_prioridade),
+    cod_turno_id                 INTEGER       NOT NULL
+                                               REFERENCES "Turno" (cod_turno),
+    cod_sub_area_conhecimento_id INTEGER       NOT NULL
+                                               REFERENCES "Sub_Area_Conhecimento" (cod_sub_area_conhecimento) 
+);
+
+-- Table: Avaliacao
+CREATE TABLE "Avaliacao" (
+    cod_avaliacao      SERIAL PRIMARY KEY,
+    valor_custo        DECIMAL NOT NULL,
+    ind_excluido       DECIMAL NOT NULL,
+    cod_necessidade_id INTEGER NOT NULL
+                               REFERENCES "Necessidade" (cod_necessidade) DEFERRABLE INITIALLY DEFERRED
+);
+
+-- Table: Secretaria
+CREATE TABLE "Secretaria" (
+    cod_secretaria SERIAL PRIMARY KEY,
+    nome           VARCHAR (200) NOT NULL
+);
+
+-- Table: Permissao
+CREATE TABLE "Permissao" (
+    cod_permissao                 SERIAL PRIMARY KEY,
+    ano_plano_capacitacao         DECIMAL NOT NULL,
+    cod_secretaria_id             INTEGER NOT NULL
+                                          REFERENCES "Secretaria" (cod_secretaria) DEFERRABLE INITIALLY DEFERRED,
+    cod_tipo_plano_capacitacao_id INTEGER NOT NULL
+                                          REFERENCES "Tipo_Plano_Capacitacao" (cod_tipo_plano_capacitacao) DEFERRABLE INITIALLY DEFERRED
+);
+
+
 INSERT INTO "Area_Conhecimento" (
                                   cod_area_conhecimento,
                                   txt_descricao,
