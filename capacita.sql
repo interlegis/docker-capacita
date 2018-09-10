@@ -3718,7 +3718,9 @@ INSERT INTO "Sub_Area_Conhecimento" (
                                       316
                                   );
 
-
+INSERT INTO "Prioridade" (nome) VALUES ('Baixa');
+INSERT INTO "Prioridade" (nome) VALUES ('Média');
+INSERT INTO "Prioridade" (nome) VALUES ('Alta');
 
 INSERT INTO "Turno" (
                       cod_turno,
