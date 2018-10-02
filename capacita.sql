@@ -18,8 +18,6 @@ CREATE TABLE "Mes" (
     nome character varying(200) NOT NULL
 );
 
-
-
 CREATE TABLE "Nivel" (
     cod_nivel SERIAL PRIMARY KEY,
     nome character varying(200) NOT NULL
@@ -56,6 +54,12 @@ CREATE TABLE "Sub_Area_Conhecimento" (
     cod_area_conhecimento_id integer references "Area_Conhecimento"(cod_area_conhecimento)
 );
 
+CREATE TABLE "Curso" (
+    cod_curso SERIAL PRIMARY KEY,
+    nome character varying(200),
+    sub_area_id integer references "Sub_Area_Conhecimento"(cod_sub_area_conhecimento)
+);
+
 CREATE TABLE "Prioridade" (
     cod_prioridade SERIAL PRIMARY KEY,
     nome character varying(200) NOT NULL
@@ -70,12 +74,13 @@ CREATE TABLE "Plano_Capacitacao" (
     ano_plano_capacitacao numeric(4,0) NOT NULL,
     ind_excluido numeric(2,0),
     cod_orgao_id integer references "Orgao"(cod_orgao),
-    cod_tipo_plano_capacitacao_id integer references "Tipo_Plano_Capacitacao"(cod_tipo_plano_capacitacao)
+    cod_tipo_plano_capacitacao_id integer references "Tipo_Plano_Capacitacao"(cod_tipo_plano_capacitacao),
+    plano_habilitado boolean
 );
 
 CREATE TABLE "Necessidade" (
     cod_necessidade SERIAL PRIMARY KEY,
-    txt_descricao character varying(200) NOT NULL,
+    txt_descricao character varying(200),
     qtd_servidor numeric(6,0) NOT NULL,
     hor_duracao numeric(2,0) NOT NULL,
     ind_excluido numeric(2,0) NOT NULL,
@@ -85,7 +90,10 @@ CREATE TABLE "Necessidade" (
     cod_plano_capacitacao_id integer references "Plano_Capacitacao"(cod_plano_capacitacao),
     cod_prioridade_id integer references "Prioridade"(cod_prioridade),
     cod_sub_area_conhecimento_id integer references "Sub_Area_Conhecimento"(cod_sub_area_conhecimento),
-    cod_turno_id integer references "Turno"(cod_turno)
+    cod_turno_id integer references "Turno"(cod_turno),
+    custo double precision,
+    curso_id integer references "Curso"(cod_curso),
+    aprovado boolean
 );
 
 CREATE TABLE "Avaliacao" (
@@ -597,6 +605,8 @@ insert into "Sub_Area_Conhecimento" (cod_sub_area_conhecimento, txt_descricao, i
 insert into "Sub_Area_Conhecimento" (cod_sub_area_conhecimento, txt_descricao, ind_excluido, cod_area_conhecimento_id) values (495,  'Portugues',0,316);
 insert into "Sub_Area_Conhecimento" (cod_sub_area_conhecimento, txt_descricao, ind_excluido, cod_area_conhecimento_id) values (496,  'Ingles',0,316);
 
+insert into "Curso" (nome, sub_area_id) values ('B', 418);
+insert into "Curso" (nome, sub_area_id) values ('C', 418);
 
 insert into "Tipo_Plano_Capacitacao" (cod_tipo_plano_capacitacao, sgl_tipo_plano_capacitacao, nome_tipo_plano_capacitacao, ind_excluido) values (5,'CP','Corem Iosum', 0);
 
@@ -907,21 +917,19 @@ insert into auth_user (id, password, date_joined, email, is_superuser, username,
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (80 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'said', 'ANDRÉ','SAID DE LAVOR'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (81 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'edimarf', 'EDIMAR',  'LUIZ DA SILVA FILHO'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (82 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'glebson', 'GLEBSON', 'MOURA DA SILVA'   ,FALSE   ,TRUE   ); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (83 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'faacm',   'FLORIAN', 'AUGUSTO DE ABREU COUTINHO MADRUGA'    ,FALSE   ,TRUE   ); 
+insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (83 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'faacm',   'FLORIAN AUGUSTO', 'DE ABREU COUTINHO MADRUGA'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (84 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'ronaldom', 'RONALDO' ,'PEREIRA MARTINS'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (85 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'sevieira', 'SESOSTRIS',   'VIEIRA'   ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (86 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'fabioad', 'FÁBIO',   'ALVES DUARTE' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (87 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'marimt',  'MARIANA', 'MIRANDA TAVARES'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (88 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,    'marciomc', 'MARCIO',  'MATURANA CARDOSO' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (3  , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'brunocordeiro180', 'BRUNO', 'CORDEIRO', FALSE, TRUE); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (4  , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com' ,FALSE,   'lulinha', 'LUIZ', 'INÁCIO LULA da SILVA', FALSE, TRUE); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (5  , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com' ,FALSE,   'ciro', 'CIRO', 'GOMES', FALSE, TRUE); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (89 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'andrefrb', 'ANDRE',   'FALCAO DO REGO BARROS'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (90 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'gleisong', 'GLEISON', 'CARNEIRO GOMES'   ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (91 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'joaovrp', 'JOÃO', 'VICENTE DA ROCHA PESSOA'  ,FALSE   ,TRUE   ); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (92 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'lela', 'VALÉRIA', 'RIBEIRO DA SILVA FRANKLIN ALMEIDA'    ,FALSE   ,TRUE   ); 
+insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (92 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'lela', 'VALÉRIA', 'RIBEIRO DA SILVA FRANKLIN'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (93 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'claudioa', 'CLÁUDIO', 'ALVES CAVALCANTE' ,FALSE   ,TRUE   ); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (94 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'paolamic', 'PAOLA',   'MICHELLE NOGUEIRA DE CERQUEIRA LIMA'  ,FALSE   ,TRUE   ); 
+insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (94 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'paolamic', 'PAOLA',   'MICHELLE NOGUEIRA DE CERQUEIRA'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (95 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'tiagomcn', 'TIAGO',   'MACINI'   ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (96 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'lhpaiva', 'LUIZ', 'HENRIQUE DE PAIVA MARQUES'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (97 , '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'molina',  'ANDRE',   'LUIZ BANDEIRA MOLINA' ,FALSE   ,TRUE   ); 
@@ -935,7 +943,7 @@ insert into auth_user (id, password, date_joined, email, is_superuser, username,
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (105, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'vladner', 'VLADNER', 'LIMA BARROS LEAL' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (106, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'patriab', 'PATRÍCIA',    'DE ANDRADE BENTES'    ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (107, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'leorgf',  'LEONARDO',    'DOS REIS GUEDES FERREIRA' ,FALSE   ,TRUE   ); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (108, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'isamaria',    'ISA', 'MARIA   DE CASTRO DIAS MAGALHÃES' ,FALSE   ,TRUE   ); 
+insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (108, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'isamaria',    'ISA', 'MARIA DE CASTRO DIAS MAGALHÃES' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (109, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'marcoscd',    'MARCOS',  'HELDER CRISÓSTOMO DAMASCENO'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (110, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'morizzo', 'MÔNICA',  'ALMEIDA RIZZO SOARES' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (111, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'raphaelc',    'RAPHAEL', 'SALGADO CARDOSO SILVA'    ,FALSE   ,TRUE   ); 
@@ -956,7 +964,7 @@ insert into auth_user (id, password, date_joined, email, is_superuser, username,
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (126, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'ramonms', 'RAMON', 'MENDES DE SOUZA'  ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (127, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'seabreno',    'BRENO',   'DA SILVA BRANDÃO' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (128, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'muniqueb',    'MUNIQUE', 'BARROS DE CARVALHO'   ,FALSE   ,TRUE   ); 
-insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (129, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'matheusc',    'MATHEUS', 'MEDEIROS MACHADO CARRION DE MACEDO'   ,FALSE   ,TRUE   ); 
+insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (129, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'matheusc',    'MATHEUS', 'MEDEIROS MACHADO CARRION'   ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (130, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'sabrina', 'SABRINA', 'SILVA NASCIMENTO' ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (131, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'gilver',  'GILVERLAN',   'PESSOA PEREIRA'   ,FALSE   ,TRUE   ); 
 insert into auth_user (id, password, date_joined, email, is_superuser, username, first_name, last_name, is_staff, is_active) values (132, '0', '2018-09-11 15:16:45-03', 'teste@gmail.com'  ,FALSE,   'alissonb', 'ALISSON', 'BRUNO DIAS DE QUEIROZ'    ,FALSE   ,TRUE   ); 
@@ -968,7 +976,6 @@ insert into auth_user (id, password, date_joined, email, is_superuser, username,
 
 
 insert into auth_user_groups (id, user_id, group_id) values (1 , 3   ,1);
-insert into auth_user_groups (id, user_id, group_id) values (3 , 5   ,3);
 insert into auth_user_groups (id, user_id, group_id) values (5 , 49  ,2);
 insert into auth_user_groups (id, user_id, group_id) values (6 , 50  ,2);
 insert into auth_user_groups (id, user_id, group_id) values (7 , 51  ,2);
@@ -1057,101 +1064,105 @@ insert into auth_user_groups (id, user_id, group_id) values (89, 133 ,2);
 insert into auth_user_groups (id, user_id, group_id) values (90, 134 ,2);
 insert into auth_user_groups (id, user_id, group_id) values (91, 135 ,2);
 insert into auth_user_groups (id, user_id, group_id) values (4 , 48  ,1);
-insert into auth_user_groups (id, user_id, group_id) values (2 , 4   ,2);
 insert into auth_user_groups (id, user_id, group_id) values (92, 138 ,2);
 
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (1 ,   FALSE ,TRUE,   3  , 48);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (2 ,   FALSE ,TRUE,   4  , 49);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (3 ,   FALSE ,TRUE,   5  , 50);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (4 ,   FALSE ,TRUE,   6  , 51);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (5 ,   FALSE ,TRUE,   7  , 52);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (6 ,   FALSE ,TRUE,   8  , 53);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (7 ,   FALSE ,TRUE,   9  , 54);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (8 ,   FALSE ,TRUE,   10 , 55);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (9 ,   FALSE ,TRUE,   11 , 56);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (10,   FALSE ,TRUE,   12 , 57);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (11,   FALSE ,TRUE,   13 , 58);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (12,   FALSE ,TRUE,   14 , 59);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (13,   FALSE ,TRUE,   15 , 60);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (14,   FALSE ,TRUE,   16 , 61);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (15,   FALSE ,TRUE,   17 , 62);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (16,   FALSE ,TRUE,   18 , 63);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (17,   FALSE ,TRUE,   19 , 64);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (18,   FALSE ,TRUE,   20 , 65);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (19,   FALSE ,TRUE,   21 , 66);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (20,   FALSE ,TRUE,   22 , 67);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (21,   FALSE ,TRUE,   23 , 68);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (22,   FALSE ,TRUE,   24 , 69);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (23,   FALSE ,TRUE,   25 , 70);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (24,   FALSE ,TRUE,   26 , 71);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (25,   FALSE ,TRUE,   27 , 72);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (26,   FALSE ,TRUE,   28 , 73);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (27,   FALSE ,TRUE,   29 , 74);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (28,   FALSE ,TRUE,   30 , 75);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (29,   FALSE ,TRUE,   31 , 76);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (30,   FALSE ,TRUE,   32 , 77);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (31,   FALSE ,TRUE,   33 , 78);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (32,   FALSE ,TRUE,   34 , 79);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (33,   FALSE ,TRUE,   35 , 80);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (34,   FALSE ,TRUE,   36 , 81);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (35,   FALSE ,TRUE,   37 , 82);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (36,   FALSE ,TRUE,   38 , 83);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (37,   FALSE ,TRUE,   39 , 84);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (38,   FALSE ,TRUE,   40 , 85);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (39,   FALSE ,TRUE,   41 , 86);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (40,   FALSE ,TRUE,   42 , 87);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (41,   FALSE ,TRUE,   43 , 88);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (42,   FALSE ,TRUE,   44 , 89);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (43,   FALSE ,TRUE,   45 , 90);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (44,   FALSE ,TRUE,   46 , 91);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (45,   FALSE ,TRUE,   47 , 92);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (46,   FALSE ,TRUE,   48 , 93);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (47,   FALSE ,TRUE,   49 , 94);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (48,   FALSE ,TRUE,   50 , 95);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (49,   FALSE ,TRUE,   51 , 96);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (50,   FALSE ,TRUE,   52 , 97);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (51,   FALSE ,TRUE,   53 , 98);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (52 , FALSE ,TRUE,   54  ,100);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (53 , FALSE ,TRUE,   55  ,101);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (54 , FALSE ,TRUE,   56  ,102);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (55 , FALSE ,TRUE,   57  ,103);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (56 , FALSE ,TRUE,   58  ,104);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (57 , FALSE ,TRUE,   59  ,105);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (58 , FALSE ,TRUE,   60  ,106);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (59 , FALSE ,TRUE,   61  ,107);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (60 , FALSE ,TRUE,   62  ,108);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (61 , FALSE ,TRUE,   63  ,109);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (62 , FALSE ,TRUE,   64  ,110);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (63 , FALSE ,TRUE,   65  ,111);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (64 , FALSE ,TRUE,   66  ,112);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (65 , FALSE ,TRUE,   67  ,113);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (66 , FALSE ,TRUE,   68  ,114);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (67 , FALSE ,TRUE,   69  ,115);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (68 , FALSE ,TRUE,   70  ,116);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (69 , FALSE ,TRUE,   71  ,117);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (70 , FALSE ,TRUE,   72  ,118);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (71 , FALSE ,TRUE,   73  ,119);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (72 , FALSE ,TRUE,   74  ,120);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (73 , FALSE ,TRUE,   75  ,121);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (74 , FALSE ,TRUE,   76  ,122);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (75 , FALSE ,TRUE,   77  ,123);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (76 , FALSE ,TRUE,   78  ,124);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (77 , FALSE ,TRUE,   79  ,125);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (78 , FALSE ,TRUE,   80  ,126);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (79 , FALSE ,TRUE,   81  ,127);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (80 , FALSE ,TRUE,   82  ,128);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (81 , FALSE ,TRUE,   83  ,129);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (82 , FALSE ,TRUE,   84  ,130);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (83 , FALSE ,TRUE,   85  ,131);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (84 , FALSE ,TRUE,   86  ,132);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (85 , FALSE ,TRUE,   87  ,133);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (86 , FALSE ,TRUE,   88  ,134);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (87 , FALSE ,TRUE,   89  ,135);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (88,   FALSE ,TRUE,   90 , 99);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (89,   FALSE ,TRUE,   90,  4);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (91,   FALSE ,TRUE,   4 ,  3);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (92, FALSE,  FALSE,   90,  5);
-insert into capacita_profile (id, titular, permissao_necessidade, orgao_id, user_id) values (93, FALSE, FALSE,   90  ,138);
+
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   3  , 2);
+
+
+
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   3  , 48);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   4  , 49);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   5  , 50);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   6  , 51);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   7  , 52);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   8  , 53);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   9  , 54);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   10 , 55);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   11 , 56);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   12 , 57);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   13 , 58);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   14 , 59);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   15 , 60);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   16 , 61);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   17 , 62);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   18 , 63);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   19 , 64);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   20 , 65);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   21 , 66);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   22 , 67);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   23 , 68);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   24 , 69);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   25 , 70);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   26 , 71);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   27 , 72);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   28 , 73);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   29 , 74);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   30 , 75);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   31 , 76);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   32 , 77);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   33 , 78);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   34 , 79);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   35 , 80);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   36 , 81);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   37 , 82);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   38 , 83);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   39 , 84);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   40 , 85);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   41 , 86);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   42 , 87);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   43 , 88);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   44 , 89);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   45 , 90);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   46 , 91);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   47 , 92);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   48 , 93);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   49 , 94);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   50 , 95);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   51 , 96);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   52 , 97);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   53 , 98);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   54  ,100);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   55  ,101);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   56  ,102);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   57  ,103);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   58  ,104);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   59  ,105);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   60  ,106);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   61  ,107);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   62  ,108);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   63  ,109);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   64  ,110);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   65  ,111);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   66  ,112);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   67  ,113);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   68  ,114);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   69  ,115);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   70  ,116);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   71  ,117);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   72  ,118);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   73  ,119);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   74  ,120);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   75  ,121);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   76  ,122);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   77  ,123);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   78  ,124);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   79  ,125);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   80  ,126);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   81  ,127);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   82  ,128);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   83  ,129);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   84  ,130);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   85  ,131);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   86  ,132);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   87  ,133);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   88  ,134);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   89  ,135);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   90 , 99);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   90,  4);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE ,TRUE,   4 ,  3);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE,  FALSE,   90,  5);
+insert into capacita_profile (titular, permissao_necessidade, orgao_id, user_id) values (FALSE, FALSE,   90  ,138);
 END IF;
 END
 $do$
