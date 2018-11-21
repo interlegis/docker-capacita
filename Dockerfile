@@ -5,7 +5,7 @@ ENV BUILD_PACKAGES postgresql-dev graphviz-dev graphviz build-base git pkgconfig
 python3-dev libxml2-dev jpeg-dev libressl-dev libffi-dev libxslt-dev nodejs py3-lxml \
 py3-magic postgresql-client poppler-utils antiword vim
 
-ENV CAPACITA_VERSION=1.0.0-24 \
+ENV CAPACITA_VERSION=1.0.0-36 \
     CAPACITA_URL=https://github.com/interlegis/capacita.git
 
 RUN apk update --update-cache && apk upgrade
@@ -30,6 +30,7 @@ RUN cd /tmp \
 
 WORKDIR /var/interlegis/capacita/
 
+COPY capacita.sql  /var/interlegis/capacita/
 COPY start.sh /var/interlegis/capacita/
 COPY busy-wait.sh /var/interlegis/capacita/
 COPY create_admin.py /var/interlegis/capacita/
