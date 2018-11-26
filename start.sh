@@ -47,12 +47,13 @@ create_env
 /bin/sh busy-wait.sh $DATABASE_URL
 
 # manage.py migrate --noinput nao funcionava
+python3 manage.py makemigrations
 yes yes | python3 manage.py migrate
 #python3 manage.py collectstatic --no-input
 # python3 manage.py rebuild_index --noinput &
 
-echo "Inicializando tabelas do BD"
-PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h capacitadb $POSTGRES_DB < /var/interlegis/capacita/capacita.sql
+#echo "Inicializando tabelas do BD"
+#PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -h capacitadb $POSTGRES_DB < /var/interlegis/capacita/capacita.sql
 
 echo "Criando usuário admin..."
 
