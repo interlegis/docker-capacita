@@ -49,7 +49,7 @@ create_env
 # manage.py migrate --noinput nao funcionava
 python3 manage.py makemigrations
 yes yes | python3 manage.py migrate
-#python3 manage.py collectstatic --no-input
+python3 manage.py collectstatic --no-input
 # python3 manage.py rebuild_index --noinput &
 
 #echo "Inicializando tabelas do BD"
